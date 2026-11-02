@@ -198,7 +198,7 @@ Comprueba en GitHub que tu fork tiene ahora dos ramas: `main` y `v2-validacion`.
 
 ## ✅ Lista de comprobación
 
-- [ ] La app no se cierra con ninguna entrada. *(comprobar en el emulador)*
+- [x] La app no se cierra con ninguna entrada. *(comprobar en el emulador)*
 - [x] Todos los textos están en `strings.xml` (ningún aviso *Hardcoded string*).
 - [x] No quedan números mágicos en `MainActivity`.
 - [x] `onCreate()` solo prepara la pantalla; la lógica está en `calcularEdad()`.
