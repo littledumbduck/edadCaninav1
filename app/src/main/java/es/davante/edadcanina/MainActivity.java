@@ -23,33 +23,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setModelo(modelo);
-        binding.btnCalc.setOnClickListener(view -> calcularEdad());
-    }
-
-    private void calcularEdad() {
-
-        switch (modelo.calcular()) {
-            case OK:
-                binding.ageInput.setError(null);
-                break;
-            case VACIO:
-                mostrarError(getString(R.string.error_vacio));
-                break;
-            case NO_NUMERO:
-                mostrarError(getString(R.string.error_no_numero));
-                break;
-            case FUERA_DE_RANGO:
-                mostrarError(getString(R.string.error_rango,
-                        EdadCaninaModelo.EDAD_MINIMA, EdadCaninaModelo.EDAD_MAXIMA));
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void mostrarError(String mensaje) {
-        binding.ageInput.setError(mensaje);
-        binding.ageInput.requestFocus();
-        // binding.resultText.setText(""); Ya no hace falta esta linea porque la visibilidad lo resuelve
+        binding.btnCalc.setOnClickListener(view -> modelo.calcular());
     }
 }
