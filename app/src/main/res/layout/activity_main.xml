@@ -9,6 +9,9 @@
         <variable
             name="modelo"
             type="es.davante.edadcanina.modelo.EdadCaninaModelo" />
+        <variable
+            name="controlador"
+            type="es.davante.edadcanina.controlador.EdadCaninaControlador" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -17,65 +20,81 @@
         android:orientation="vertical"
         tools:context=".MainActivity">
 
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
-            android:gravity="center"
             android:layout_marginTop="32dp"
-            android:text="@string/txt_titulo">
-
-        </TextView>
+            android:gravity="center"
+            android:text="@string/txt_titulo"
+            android:textSize="32sp" />
 
         <ImageView
             android:layout_width="192dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/imgdog"
-            android:adjustViewBounds="true"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/imgdog" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:gravity="center"
             android:text="@string/input_age"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:gravity="center" />
+            android:textSize="16sp" />
 
         <EditText
-            android:text="@={modelo.edadTexto}"
+            android:id="@+id/age_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:textSize="48sp"
+            android:gravity="center"
             android:hint="@string/hint_edad"
+            android:importantForAutofill="no"
             android:inputType="number"
             android:maxLength="2"
-            android:gravity="center"
-            android:importantForAutofill="no"
-            android:id="@+id/age_input" />
+            android:textSize="48sp"
+            android:text="@={modelo.edadTexto}"
+            app:errorValidacion="@{modelo.validacion}" />
 
         <TextView
-            android:text="@{@string/tu_edad_format(modelo.edadHumana)}"
-            android:visibility="@{modelo.validacion == Validacion.OK ? View.VISIBLE : View.INVISIBLE}"
+            android:id="@+id/result_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:gravity="center"
             android:layout_marginTop="20dp"
-            android:id="@+id/result_text" />
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@{@string/tu_edad_format(modelo.edadHumana)}"
+            android:visibility="@{modelo.validacion == Validacion.OK ? View.VISIBLE : View.INVISIBLE}" />
 
-        <Button
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="@string/btn_calc"
-            android:textSize="22sp"
-            android:id="@+id/btn_calc" />
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/btn_calc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="@string/btn_calc"
+                android:textSize="22sp"
+                android:onClick="@{() -> controlador.onCalcularClick()}" />
+
+            <Button
+                android:id="@+id/btn_limpiar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_limpiar"
+                android:textSize="22sp"
+                android:onClick="@{() -> controlador.onLimpiarClick()}" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

@@ -89,4 +89,10 @@ public class EdadCaninaModelo extends BaseObservable {
         setValidacion(Validacion.OK);
         return validacion;
     }
+
+    public void limpiar() {
+        setEdadTexto("");
+        setEdadHumana(0);
+        setValidacion(Validacion.SIN_CALCULAR);
+    }
 }
