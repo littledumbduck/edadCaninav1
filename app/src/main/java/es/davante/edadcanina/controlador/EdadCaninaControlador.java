@@ -2,6 +2,11 @@ package es.davante.edadcanina.controlador;
 
 import es.davante.edadcanina.modelo.EdadCaninaModelo;
 
+/**
+ * Convierte cada acción del usuario en una orden al modelo. De esta forma,
+ * podemos separar el código y poder modificarlo más rápido y mejor.
+ */
+
 public class EdadCaninaControlador {
 
     private final EdadCaninaModelo modelo;

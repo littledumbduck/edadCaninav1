@@ -5,8 +5,16 @@ import androidx.databinding.BindingAdapter;
 import es.davante.edadcanina.R;
 import es.davante.edadcanina.modelo.EdadCaninaModelo;
 import es.davante.edadcanina.modelo.Validacion;
+/**
+ * Atributos XML propios para la vista. Está en el paquete 'vista' y no en 'modelo'
+ * porque traduce y pinta: usa R.string (textos según el idioma) y EditText, que son
+ * de Android. Así el modelo sigue sin depender de Android y se puede probar con JUnit.
+ */
 public final class AdaptadoresVista {
+    // Clase de utilidades con métodos estáticos: no tiene sentido crear objetos de ella
     private AdaptadoresVista() { }
+    // Crea el atributo app:errorValidacion. Debe ser public static para que DataBinding
+    // pueda llamarlo sin crear un objeto; recibe la vista y el valor de @{modelo.validacion}
     @BindingAdapter("errorValidacion")
     public static void mostrarErrorValidacion(EditText campo, Validacion validacion) {
         String mensaje = mensajeDeError(campo.getContext(), validacion);

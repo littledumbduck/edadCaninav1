@@ -8,6 +8,10 @@ import es.davante.edadcanina.controlador.EdadCaninaControlador;
 import es.davante.edadcanina.databinding.ActivityMainBinding;
 import es.davante.edadcanina.modelo.EdadCaninaModelo;
 import es.davante.edadcanina.modelo.Validacion;
+/**
+ * Solo crea las tres piezas (modelo, vista y controlador), las conecta y guarda
+ * el estado al girar. No contiene lógica de la app.
+ */
 
 public class MainActivity extends AppCompatActivity {
     // Claves constantes: un error tipográfico en una clave escrita dos veces no se detecta
@@ -21,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_main);
         modelo = new EdadCaninaModelo();
+        // Al girar, Android crea una Activity nueva con un modelo vacío: lo reconstruimos
+        // antes de entregarlo al binding para que la pantalla nazca ya con el estado correcto
         if (savedInstanceState != null) {
+            // Con este método recuperamos lo escrito al recrear la vista.
             restaurarEstado(savedInstanceState);
         }
         binding.setModelo(modelo);
