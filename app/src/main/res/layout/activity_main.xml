@@ -46,6 +46,7 @@
             android:gravity="center" />
 
         <EditText
+            android:text="@={modelo.edadTexto}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -58,6 +59,8 @@
             android:id="@+id/age_input" />
 
         <TextView
+            android:text="@{@string/tu_edad_format(modelo.edadHumana)}"
+            android:visibility="@{modelo.validacion == Validacion.OK ? View.VISIBLE : View.INVISIBLE}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"

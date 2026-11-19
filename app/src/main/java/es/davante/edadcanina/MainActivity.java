@@ -22,19 +22,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
+        binding.setModelo(modelo);
         binding.btnCalc.setOnClickListener(view -> calcularEdad());
     }
 
     private void calcularEdad() {
-        modelo.setEdadTexto(binding.ageInput.getText().toString());
 
-        // El modelo dice qué ha pasado; aquí se decide cómo se pinta (usa getString, que es de Android)
         switch (modelo.calcular()) {
             case OK:
                 binding.ageInput.setError(null);
-                binding.resultText.setText(
-                        getString(R.string.tu_edad_format, modelo.getEdadHumana()));
                 break;
             case VACIO:
                 mostrarError(getString(R.string.error_vacio));
@@ -54,6 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private void mostrarError(String mensaje) {
         binding.ageInput.setError(mensaje);
         binding.ageInput.requestFocus();
-        binding.resultText.setText("");
+        // binding.resultText.setText(""); Ya no hace falta esta linea porque la visibilidad lo resuelve
     }
 }
