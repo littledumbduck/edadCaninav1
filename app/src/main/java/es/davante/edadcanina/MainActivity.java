@@ -1,34 +1,35 @@
 package es.davante.edadcanina;
+
 import android.os.Bundle;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+
 import es.davante.edadcanina.databinding.ActivityMainBinding;
-import modelo.EdadCaninaModelo;
+import es.davante.edadcanina.modelo.EdadCaninaModelo;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int FACTOR_CANINO = 7; // de momento siguen aquí (paso 3)
-    private static final int EDAD_MINIMA = 1;
-    private static final int EDAD_MAXIMA = 30;
-    // Un único atributo sustituye a ageEdit y resultText: el binding ya conoce todas las vistas
+
+    // El binding sustituye a todos los findViewById: conoce todas las vistas con id
     private ActivityMainBinding binding;
+
+    // Las reglas y los datos viven en el modelo; la Activity solo pinta
+    private final EdadCaninaModelo modelo = new EdadCaninaModelo();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
         binding.btnCalc.setOnClickListener(view -> calcularEdad());
     }
-    private void mostrarError(String mensaje) {
-        binding.ageInput.setError(mensaje);
-        binding.ageInput.requestFocus();
-        binding.resultText.setText("");
-    }
 
-    private final EdadCaninaModelo modelo = new EdadCaninaModelo(); // atributo nuevo
-    // (borra FACTOR_CANINO, EDAD_MINIMA y EDAD_MAXIMA de aquí: ya viven en el modelo)
     private void calcularEdad() {
         modelo.setEdadTexto(binding.ageInput.getText().toString());
+
+        // El modelo dice qué ha pasado; aquí se decide cómo se pinta (usa getString, que es de Android)
         switch (modelo.calcular()) {
             case OK:
                 binding.ageInput.setError(null);
@@ -48,5 +49,11 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    private void mostrarError(String mensaje) {
+        binding.ageInput.setError(mensaje);
+        binding.ageInput.requestFocus();
+        binding.resultText.setText("");
     }
 }
