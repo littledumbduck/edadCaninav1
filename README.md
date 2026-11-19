@@ -203,3 +203,60 @@ Comprueba en GitHub que tu fork tiene ahora dos ramas: `main` y `v2-validacion`.
 - [x] No quedan números mágicos en `MainActivity`.
 - [x] `onCreate()` solo prepara la pantalla; la lógica está en `calcularEdad()`.
 - [x] El trabajo está en la rama `v2-validacion`, no en `main`.
+
+---
+
+# 🐶 EdadCaninaMVC · v3 (rama `v3-mvc`)
+
+La v3 hace exactamente lo mismo que la v2, pero cada responsabilidad está en su pieza gracias a **DataBinding** y al patrón **MVC**. `MainActivity` ya no tiene ningún `findViewById`, `setText` ni `setOnClickListener`.
+
+## Estructura
+
+| Pieza | Dónde | Qué hace |
+|---|---|---|
+| Modelo | `modelo/EdadCaninaModelo`, `modelo/Validacion` | Guarda la entrada y el resultado, valida, calcula y avisa con `notifyPropertyChanged`. No importa nada de `android.*` |
+| Vista | `activity_main.xml`, `vista/AdaptadoresVista` | Se pinta a partir del modelo con `@{}` y `@={}`; el error se muestra con el atributo propio `app:errorValidacion` |
+| Controlador | `controlador/EdadCaninaControlador` | Convierte los clics de Calcular y Limpiar en órdenes al modelo |
+| Activity | `MainActivity` | Crea las tres piezas, las conecta y guarda el estado al girar |
+
+## Pasos y etiquetas
+
+| Etiqueta | Paso |
+|---|---|
+| `paso-1` / `paso-2` | Activar DataBinding y envolver el layout en `<layout>` (mismo commit) |
+| `paso-3` | Modelo `EdadCaninaModelo` y enum `Validacion`, con pruebas JUnit |
+| `paso-4` | Modelo observable y enlace de datos |
+| `paso-5` | Error con `@BindingAdapter` propio |
+| `paso-6` | Controlador y botón Limpiar |
+| `paso-7` | Conservar el estado al girar |
+
+## Pruebas
+
+En `app/src/test`, sin emulador: 9 del modelo (caso correcto, vacío, no numérico, fuera de rango, límites 1 y 30, caducidad del resultado, avisos del modelo y los dos casos del reto) y 1 del controlador.
+
+## Reto realizado: casos raros
+
+**¿Qué hace la app con `05` o con `+5`?** He decidido que los dos son **válidos**: `05` es un 5 con un cero delante y `+5` es un 5 con signo positivo, así que los dos deben dar 35 años.
+
+**Cómo lo he resuelto:** `Integer.parseInt` ya acepta los dos formatos, así que el modelo no necesitaba cambios. Lo que he hecho es dejar la decisión fijada con dos pruebas (`reto_cero_a_la_izquierda_es_valido` y `reto_signo_mas_es_valido`). Así, si alguien cambia la validación en el futuro, las pruebas avisarán de que el comportamiento cambia.
+
+En la app, `+5` no se puede escribir porque el `EditText` tiene `inputType="number"`. Aun así lo pruebo en el modelo porque el modelo no debe fiarse de la vista: es independiente de la pantalla y tiene que decidir por su cuenta qué entrada es válida.
+
+## Explícalo con tus palabras
+
+**1. ¿Qué diferencia hay entre `@{...}` y `@={...}`?**
+
+`@{...}` es un enlace en un solo sentido, del modelo a la vista: la vista lee el dato y se repinta cuando el modelo avisa. Lo uso en el resultado (`@{@string/tu_edad_format(modelo.edadHumana)}`) y en su visibilidad. `@={...}` es un enlace en los dos sentidos: además de leer del modelo, lo que escribe el usuario llega solo al modelo, porque el binding llama a `setEdadTexto()` cada vez que cambia el texto. Lo uso en el `EditText` de la edad, y por eso ya no hace falta `getText()`. Por ese viaje de ida y vuelta, `setEdadTexto()` comprueba si el texto ha cambiado antes de avisar; si no, se formaría un bucle.
+
+**2. ¿Qué ocurre, paso a paso, desde que pulsas Calcular hasta que aparece «42»?**
+
+1. Al escribir «6», el enlace `@={modelo.edadTexto}` llama a `modelo.setEdadTexto("6")`.
+2. Al pulsar Calcular, la expresión `@{() -> controlador.onCalcularClick()}` del botón llama al controlador.
+3. El controlador solo da la orden: `modelo.calcular()`.
+4. El modelo valida (no está vacío, es un número, está entre 1 y 30) y calcula 6 × 7 = 42. Lo guarda con `setEdadHumana(42)` y `setValidacion(OK)`, y cada setter avisa con `notifyPropertyChanged(BR.edadHumana)` y `notifyPropertyChanged(BR.validacion)`.
+5. El binding, que se suscribió al modelo con `binding.setModelo(modelo)`, recibe los avisos y vuelve a evaluar solo las expresiones que usan esas propiedades.
+6. El `TextView` del resultado recibe el texto «…tendría 42 años» y pasa a `VISIBLE` porque la validación es `OK`. El adaptador `errorValidacion` recibe `OK` y quita el error del campo.
+
+**3. ¿Qué cambiarías para que el factor fuera 6 en vez de 7, y por qué solo tocas un fichero?**
+
+Solo cambiaría la constante `FACTOR_CANINO = 7` por `6` en `EdadCaninaModelo.java`. Es una regla de negocio, y en MVC las reglas viven únicamente en el modelo: la vista solo muestra `edadHumana` sin saber cómo se calcula, el controlador solo da la orden de calcular y la Activity solo conecta las piezas. Como ningún otro fichero repite ese 7, no hay que tocar nada más. En la v2, en cambio, el cálculo estaba mezclado en `MainActivity` con el código que pinta la pantalla.

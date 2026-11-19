@@ -48,4 +48,21 @@ public class EdadCaninaModeloTest {
         modelo.setEdadTexto("7");
         assertEquals(Validacion.SIN_CALCULAR, modelo.getValidacion());
     }
+
+    @Test
+    public void reto_cero_a_la_izquierda_es_valido() {
+        // Decisión del reto: "05" es un 5 escrito con un cero delante; no hay motivo para rechazarlo
+        modelo.setEdadTexto("05");
+        assertEquals(Validacion.OK, modelo.calcular());
+        assertEquals(35, modelo.getEdadHumana());
+    }
+
+    @Test
+    public void reto_signo_mas_es_valido() {
+        // Decisión del reto: "+5" sigue siendo 5. El teclado numérico no deja escribirlo,
+        // pero el modelo no depende de la vista, así que lo decide y lo prueba por su cuenta
+        modelo.setEdadTexto("+5");
+        assertEquals(Validacion.OK, modelo.calcular());
+        assertEquals(35, modelo.getEdadHumana());
+    }
 }
