@@ -1,66 +1,52 @@
 package es.davante.edadcanina;
-
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import es.davante.edadcanina.databinding.ActivityMainBinding;
+import modelo.EdadCaninaModelo;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final int FACTOR_CANINO = 7;
+    private static final int FACTOR_CANINO = 7; // de momento siguen aquí (paso 3)
     private static final int EDAD_MINIMA = 1;
-    private static final int EDAD_MAXIMA = 30; // ningún perro supera esta edad
-
-    private EditText ageEdit;
-    private TextView resultText;
-
+    private static final int EDAD_MAXIMA = 30;
+    // Un único atributo sustituye a ageEdit y resultText: el binding ya conoce todas las vistas
+    private ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-
-        // Declaramos variables
-        ageEdit = findViewById(R.id.age_input);
-        resultText = findViewById(R.id.result_text);
-        Button button1 = findViewById(R.id.btn_calc);
-
-        // Implementar el boton (setOnClickListener)
-        button1.setOnClickListener(view -> calcularEdad());
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding.btnCalc.setOnClickListener(view -> calcularEdad());
     }
-
-    private void calcularEdad() {
-        String ageString = ageEdit.getText().toString().trim();
-
-        if (ageString.isEmpty()) {
-            mostrarError(getString(R.string.error_vacio));
-            return;
-        }
-
-        int age;
-        try {
-            age = Integer.parseInt(ageString);
-        } catch (NumberFormatException e) {
-            mostrarError(getString(R.string.error_no_numero));
-            return;
-        }
-
-        if (age < EDAD_MINIMA || age > EDAD_MAXIMA) {
-            mostrarError(getString(R.string.error_rango, EDAD_MINIMA, EDAD_MAXIMA));
-            return;
-        }
-
-        ageEdit.setError(null);
-        int dogAge = age * FACTOR_CANINO;
-        resultText.setText(getString(R.string.tu_edad_format, dogAge));
-    }
-
     private void mostrarError(String mensaje) {
-        ageEdit.setError(mensaje);
-        ageEdit.requestFocus();
-        resultText.setText("");
+        binding.ageInput.setError(mensaje);
+        binding.ageInput.requestFocus();
+        binding.resultText.setText("");
+    }
+
+    private final EdadCaninaModelo modelo = new EdadCaninaModelo(); // atributo nuevo
+    // (borra FACTOR_CANINO, EDAD_MINIMA y EDAD_MAXIMA de aquí: ya viven en el modelo)
+    private void calcularEdad() {
+        modelo.setEdadTexto(binding.ageInput.getText().toString());
+        switch (modelo.calcular()) {
+            case OK:
+                binding.ageInput.setError(null);
+                binding.resultText.setText(
+                        getString(R.string.tu_edad_format, modelo.getEdadHumana()));
+                break;
+            case VACIO:
+                mostrarError(getString(R.string.error_vacio));
+                break;
+            case NO_NUMERO:
+                mostrarError(getString(R.string.error_no_numero));
+                break;
+            case FUERA_DE_RANGO:
+                mostrarError(getString(R.string.error_rango,
+                        EdadCaninaModelo.EDAD_MINIMA, EdadCaninaModelo.EDAD_MAXIMA));
+                break;
+            default:
+                break;
+        }
     }
 }

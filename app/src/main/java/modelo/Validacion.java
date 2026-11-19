@@ -2,6 +2,8 @@ package modelo;
 
 public enum Validacion {
     SIN_CALCULAR,
-    CORRECTO,
-    VACIO
+    OK,
+    VACIO,
+    NO_NUMERO,
+    FUERA_DE_RANGO
 }
